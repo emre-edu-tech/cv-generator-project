@@ -73,7 +73,7 @@ const defaultCV = {
     location: "San Francisco, CA",
     linkedin: "linkedin.com/in/alex",
     portfolio: "alex.dev",
-    summary: "Frontend developer with 5+ years..."
+    summary: "Frontend developer with 5+ years experience..."
   },
   experience: [
     {
@@ -174,7 +174,20 @@ function atsTemplate1(cv) {
       <h1>${cv.personal.fullName}</h1>
       <h2>${cv.personal.jobTitle}</h2>
       <div class="contact">${cv.personal.email} | ${cv.personal.contact}</div>
+      <div class="summary">${cv.personal.summary}</div>
+
+      <h3>Work Experience</h3>
+      ${cv.experience.map(exp => `
+        <div class="job">
+          <div><strong>${exp.title}</strong> at ${exp.company}</div>
+          <div>${exp.startDate} - ${exp.endDate}</div>
+          <ul>${exp.bullets.map(b => `<li>${b}</li>`).join('')}</ul>
+        </div>
+      `).join('')}
+
+      <h3>Skills</h3>
+      <ul>${cv.skills.map(s => `<li>${s}</li>`).join('')}</ul>
     </div>
-  `
+  `;
 }
 ```
