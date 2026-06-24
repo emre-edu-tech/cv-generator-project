@@ -41,6 +41,9 @@ Add these features below if MVP is successful.
 - For the beginning it should be simple and client-side only.
 - Pure HTML/CSS/JS
 
+## Technical Architecture Blueprint
+This blueprint can be used to be fed to a coding agent.
+
 ### Project Structure (MVP)
 ```
 cv-generator/
@@ -55,4 +58,123 @@ cv-generator/
 │   ├── exporter.js     # PDF export (html2pdf.js? no – use browser print)
 │   └── storage.js      # LocalStorage save/load/autosave
 └── assets/ (optional)  # Icons, placeholder avatar
+```
+
+### Core Data Model (models.js)
+These below will be the main fields that should be filled by the user for their CVs. Fields can be changed later.
+```javascript
+// Single source of truth for the CV
+const defaultCV = {
+  personal: {
+    fullName: "Alex Johnson",
+    jobTitle: "Frontend Developer",
+    email: "alex@example.com",
+    phone: "+1 234 567 890"a
+    location: "San Francisco, CA",
+    linkedin: "linkedin.com/in/alex",
+    portfolio: "alex.dev",
+    summary: "Frontend developer with 5+ years..."
+  },
+  experience: [
+    {
+      company: "Tech Corp",
+      location: "Remote",
+      title: "Senior Frontend Dev",
+      startDate: "2022-01",
+      endDate: "Present",
+      bullets: [
+        "Built component library used by 10+ teams",
+        "Reduced bundle size by 35%"
+      ]
+    }
+  ],
+  education: [
+    {
+      degree: "BSc Computer Science",
+      institution: "University of Example",
+      year: "2018"
+    }
+  ],
+  skills: ["JavaScript", "React", "CSS", "Git"],
+  projects: [
+    {
+      name: "ATS CV Builder",
+      description: "Web app with 2k+ users",
+      link: "github.com/..."
+    }
+  ],
+  certifications: [],
+  languages: ["English (native)", "Spanish (intermediate)"]
+};
+```
+
+### Component Responsibilities
+| File | Role | Key Functions |
+|------|------|---------------|
+| `model.js` | Define default data & validation | `validateCV(cv), deepCopy()` |
+| `storage.js` | Persist user progress | `saveToLocalStorage(), loadFromLocalStorage(), autoSave()` |
+| `templates.js` | HTML strings for CV layouts | `renderTemplate1(), renderTemplate2()` - single-column ATS-friendly |
+| `renderer.js` | Inject template into preview iframe/DOM | `updatePreview(cv, templateId), refresh()` |
+| `exporter.js` | Generate PDF via print | `exportAsPDF()` -> triggers `window.print()` with print-optimized CSS |
+| `app.js` | Orchestrate UI events, forms, live updates | `init()`, bind input listeners, handle template switching |
+
+### UI Layout
+┌─────────────────────────────────────────────┐
+│  [Template Selector]  [Save] [Load] [PDF]   │
+├─────────────────┬───────────────────────────┤
+│                 │                           │
+│   EDITOR SIDEBAR│      CV PREVIEW           │
+│   (Forms)       │      (live iframe/div)    │
+│                 │                           │
+│  - Personal     │                           │
+│  - Experience   │                           │
+│  - Education    │                           │
+│  - Skills       │                           │
+│  - Projects     │                           │
+│  + Add Section  │                           │
+│                 │                           │
+└─────────────────┴───────────────────────────┘
+
+- **Editor sidebar** uses plain `<input>`, `<textarea>`, and dynamic lists (buttons to add/remove entries inside CV).
+- **Preview** updates on every keystroke (debounced - preventing the excessive triggering of the update functions).
+- **No authentication** for the beginning (will be added after development of MVP) - all data stays in `localStorage` for now.
+
+### PDF Export Strategy (no libraries - print friendly CSS)
+Here main goal will be to create a print-friendly CSS file to support PDF export. I do not need any CSS library for this. Just use vanilla CSS. Then when the user chooses "Save as PDF", CV can be exported using a small JavaScript code. (For now, there is no dependency.)
+
+### LocalStorage Autosave (storage.js)
+The code below is just an example. It was added just for reference. As you may see, this is not even a complete script.
+```javascript
+const STORAGE_KEY = "cv_generator_data";
+
+function autoSave(cv) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cv));
+}
+
+function loadFromStorage() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  return raw ? JSON.parse(raw) : defaultCV;   // defaultCV is the Core Data Model for a CV in JSON representation
+}
+```
+`autoSave()` will be called after any CV update. (debounced)
+
+### ATS Compatibility Checklist
+CV Templates must enforce the following features:
+- Single column layout
+- Standard headings: `Work Experience`, `Education`, `Skills`
+- No tables or graphics in main content
+- Font: Arial, Calibri, or Georgia (safe)
+- No text boxes or `position: absolute` for content
+
+### Example Template HTML Structure (templates.js)
+```javascript
+function atsTemplate1(cv) {
+  return `
+    <div class="cv-container">
+      <h1>${cv.personal.fullName}</h1>
+      <h2>${cv.personal.jobTitle}</h2>
+      <div class="contact">${cv.personal.email} | ${cv.personal.contact}</div>
+    </div>
+  `
+}
 ```
