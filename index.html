@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS-Compatible CV Generator</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <h1>CV Generator</h1>
+        <p>ATS-compatible, single-column resume builder</p>
+      </div>
+      <div class="toolbar">
+        <button id="btnSave" type="button">Save</button>
+        <button id="btnLoad" type="button">Load</button>
+        <button id="btnReset" type="button">Reset</button>
+        <button id="btnExport" type="button">Export PDF</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="editor-panel">
+        <div class="panel-header">
+          <h2>Editor</h2>
+          <p>Enter your resume content. Preview updates live.</p>
+        </div>
+
+        <form id="cvForm" class="cv-form">
+          <fieldset>
+            <legend>Personal Information</legend>
+            <label>
+              Full Name
+              <input name="personal.fullName" type="text" placeholder="Alex Johnson" />
+            </label>
+            <label>
+              Job Title
+              <input name="personal.jobTitle" type="text" placeholder="Frontend Developer" />
+            </label>
+            <label>
+              Email
+              <input name="personal.email" type="email" placeholder="alex@example.com" />
+            </label>
+            <label>
+              Phone
+              <input name="personal.phone" type="text" placeholder="+1 234 567 890" />
+            </label>
+            <label>
+              Location
+              <input name="personal.location" type="text" placeholder="San Francisco, CA" />
+            </label>
+            <label>
+              LinkedIn
+              <input name="personal.linkedin" type="text" placeholder="linkedin.com/in/alex" />
+            </label>
+            <label>
+              Portfolio
+              <input name="personal.portfolio" type="text" placeholder="alex.dev" />
+            </label>
+            <label>
+              Summary
+              <textarea name="personal.summary" rows="3" placeholder="Experienced frontend developer..."></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset class="repeat-section" data-section="experience">
+            <legend>Work Experience</legend>
+            <div class="section-items" id="experienceItems"></div>
+            <button id="btnAddExperience" type="button" class="add-item">+ Add Experience</button>
+          </fieldset>
+
+          <fieldset class="repeat-section" data-section="education">
+            <legend>Education</legend>
+            <div class="section-items" id="educationItems"></div>
+            <button id="btnAddEducation" type="button" class="add-item">+ Add Education</button>
+          </fieldset>
+
+          <fieldset>
+            <legend>Skills</legend>
+            <div class="tag-input">
+              <input id="skillInput" type="text" placeholder="Type a skill and press Enter" />
+            </div>
+            <div id="skillsList" class="tag-list"></div>
+          </fieldset>
+
+          <fieldset class="repeat-section" data-section="projects">
+            <legend>Projects</legend>
+            <div class="section-items" id="projectItems"></div>
+            <button id="btnAddProject" type="button" class="add-item">+ Add Project</button>
+          </fieldset>
+
+          <fieldset class="repeat-section" data-section="certifications">
+            <legend>Certifications</legend>
+            <div class="section-items" id="certificationItems"></div>
+            <button id="btnAddCertification" type="button" class="add-item">+ Add Certification</button>
+          </fieldset>
+
+          <fieldset>
+            <legend>Languages</legend>
+            <label>
+              Languages (comma separated)
+              <input id="languagesInput" name="languages" type="text" placeholder="English (native), Spanish (intermediate)" />
+            </label>
+          </fieldset>
+        </form>
+      </section>
+
+      <section class="preview-panel">
+        <div class="panel-header">
+          <h2>Preview</h2>
+          <p>Print-friendly CV preview for ATS compatibility.</p>
+        </div>
+        <div id="previewContainer" class="preview-container"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/models.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/templates.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

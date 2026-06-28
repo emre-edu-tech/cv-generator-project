@@ -1,4 +1,6 @@
-# CV Generator Application
+# CV Generator Application - Technical Spec (Without Backend)
+
+Specifications for building a pure HTML/CSS/JS CV generator with these features below:
 
 **Important Note:** My main goal was to create an ATS software but because it is a very complex system, I decided to create an ATS Compatible CV Generator application.
 
